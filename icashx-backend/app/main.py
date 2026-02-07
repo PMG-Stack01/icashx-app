@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import leads, properties, analysis, communications, contracts, buyers
+from .api import leads, properties, analysis, communications, contracts, buyers
 from app.database import Base, engine
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="iCashX Backend", version="1.0")
+
+app.include_router(leads.router)
 
 # CORS setup
 app.add_middleware(
