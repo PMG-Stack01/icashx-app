@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api import leads, properties, analysis, communications, contracts, buyers
+from app.api import leads, properties, analysis, communications, contracts, buyers
 from app.database import Base, engine
 
 Base.metadata.create_all(bind=engine)
