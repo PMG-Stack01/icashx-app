@@ -5,19 +5,22 @@ export default function Leads() {
   const [leads, setLeads] = useState([]);
 
   useEffect(() => {
-    api.get("/leads/list").then((res) => setLeads(res.data));
+    api
+      .get("/leads/list")
+      .then((res) => setLeads(res.data))
+      .catch(() => console.log("Failed to load leads"));
   }, []);
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Leads</h1>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Leads</h1>
       <table className="min-w-full bg-white rounded shadow">
         <thead>
-          <tr className="border-b">
-            <th className="px-4 py-2">Name</th>
-            <th className="px-4 py-2">Phone</th>
-            <th className="px-4 py-2">Address</th>
-            <th className="px-4 py-2">Status</th>
+          <tr>
+            <th className="px-4 py-2 text-left">Name</th>
+            <th className="px-4 py-2 text-left">Phone</th>
+            <th className="px-4 py-2 text-left">Address</th>
+            <th className="px-4 py-2 text-left">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -26,11 +29,7 @@ export default function Leads() {
               <td className="px-4 py-2">{lead.name}</td>
               <td className="px-4 py-2">{lead.phone}</td>
               <td className="px-4 py-2">{lead.address}</td>
-              <td className="px-4 py-2">
-                <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded">
-                  {lead.status}
-                </span>
-              </td>
+              <td className="px-4 py-2">{lead.status}</td>
             </tr>
           ))}
         </tbody>

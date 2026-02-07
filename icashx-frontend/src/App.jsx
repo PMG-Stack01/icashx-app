@@ -1,16 +1,13 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import Leads from "./pages/Leads";
-import Properties from "./pages/Properties";
+import { Outlet, Link } from "react-router-dom";
+import Navbar from "./components/Navbar";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/leads" element={<Leads />} />
-        <Route path="/properties" element={<Properties />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="min-h-screen bg-gray-100">
+      <Navbar />
+      <main className="p-6">
+        <Outlet />
+      </main>
+    </div>
   );
 }
