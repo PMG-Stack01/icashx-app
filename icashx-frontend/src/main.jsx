@@ -3,6 +3,9 @@ import AppWrapper from "./App";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
 import Properties from "./pages/Properties";
+import Buyers from "./pages/Buyers";
+import Contracts from "./pages/Contracts";
+import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PrivateRoute from "./components/PrivateRoute";
@@ -37,6 +40,30 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             element={
               <PrivateRoute>
                 <Properties />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/buyers"
+            element={
+              <PrivateRoute>
+                <Buyers />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/contracts"
+            element={
+              <PrivateRoute>
+                <Contracts />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <PrivateRoute>
+                <Settings />
               </PrivateRoute>
             }
           />
