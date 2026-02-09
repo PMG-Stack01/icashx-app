@@ -1,30 +1,24 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.models import Lead
 
 router = APIRouter(prefix="/leads", tags=["Leads"])
 
-class Lead(BaseModel):
-    id: int
-    name: str
-    phone: str
-    address: str
-    status: str = "new"
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-fake_leads_db: List[Lead] = []
+@router.get("/list")
+def list_leads(db: Session = Depends(get_db)):
+    return db.query(Lead).all()
 
-@router.post("/create", response_model=Lead)
-def create_lead(lead: Lead):
-    fake_leads_db.append(lead)
-    return lead
-
-@router.get("/list", response_model=List[Lead])
-def list_leads():
-    return fake_leads_db
-
-@router.get("/lead/{lead_id}", response_model=Lead)
-def get_lead(lead_id: int):
-    lead = next((l for l in fake_leads_db if l.id == lead_id), None)
-    if not lead:
-        raise HTTPException(status_code=404, detail="Lead not found")
+@router.post("/add")
+def add_lead(lead: Lead, db: Session = Depends(get_db)):
+    db.add(lead)
+    db.commit()
+    db.refresh(lead)
     return lead

@@ -1,24 +1,24 @@
-from fastapi import APIRouter
-from pydantic import BaseModel
-from typing import List, Dict
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.models import Buyer
 
 router = APIRouter(prefix="/buyers", tags=["Buyers"])
 
-class Buyer(BaseModel):
-    id: int
-    name: str
-    email: str
-    location: str
-    max_budget: float
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-fake_buyers_db: List[Buyer] = []
+@router.get("/list")
+def list_buyers(db: Session = Depends(get_db)):
+    return db.query(Buyer).order_by(Buyer.created_at.desc()).all()
 
-@router.post("/add", response_model=Buyer)
-def add_buyer(buyer: Buyer):
-    fake_buyers_db.append(buyer)
+@router.post("/add")
+def add_buyer(buyer: Buyer, db: Session = Depends(get_db)):
+    db.add(buyer)
+    db.commit()
+    db.refresh(buyer)
     return buyer
-
-@router.get("/match")
-def match_buyers(location: str, budget: float) -> List[Dict]:
-    buyers = [b for b in fake_buyers_db if b.location.lower() == location.lower() and b.max_budget >= budget]
-    return buyers

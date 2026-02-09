@@ -1,28 +1,24 @@
-from fastapi import APIRouter
-from pydantic import BaseModel
-from datetime import date
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.models import Contract
 
 router = APIRouter(prefix="/contracts", tags=["Contracts"])
 
-class ContractData(BaseModel):
-    seller_name: str
-    property_address: str
-    purchase_price: float
-    closing_date: date
-    email: str
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-@router.post("/generate")
-def generate_contract(data: ContractData):
-    # Placeholder for Docx/PDF creation
-    file_path = f"/tmp/{data.seller_name}_contract.pdf"
-    return {"message": "Contract generated", "file": file_path}
+@router.get("/list")
+def list_contracts(db: Session = Depends(get_db)):
+    return db.query(Contract).all()
 
-@router.post("/send")
-def send_contract(data: ContractData):
-    # Placeholder for email/text logic
-    return {
-        "status": "sent",
-        "recipient_email": data.email,
-        "property": data.property_address,
-        "price": data.purchase_price
-    }
+@router.post("/add")
+def add_contract(contract: Contract, db: Session = Depends(get_db)):
+    db.add(contract)
+    db.commit()
+    db.refresh(contract)
+    return contract
